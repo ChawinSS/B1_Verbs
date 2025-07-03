@@ -6,21 +6,69 @@
 <meta charset="utf-8"/>
 <title>Complete Quiz App</title>
 <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    .choice-button {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
-      cursor: pointer;
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    font-size: 16px;
+  }
+
+  .choice-button {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    cursor: pointer;
+    font-size: 1em;
+  }
+
+  .choice-button:hover {
+    background: #e0e0e0;
+  }
+
+  .correct {
+    background: #c8e6c9;
+  }
+
+  .wrong {
+    background: #ffcdd2;
+  }
+
+  button {
+    margin: 10px 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+  }
+
+  h2, p {
+    font-size: 1em;
+  }
+
+  /* ✅ Increase font size for smaller screens */
+  @media (max-width: 600px) {
+    body {
+      font-size: 18px;
     }
-    .choice-button:hover { background: #e0e0e0; }
-    .correct { background: #c8e6c9; }
-    .wrong { background: #ffcdd2; }
-    button { margin: 10px 5px; padding: 10px 20px; }
-  </style>
+
+    h2, p, button, .choice-button {
+      font-size: 1.1em;
+    }
+  }
+
+  @media (max-width: 400px) {
+    body {
+      font-size: 19px;
+    }
+
+    h2, p, button, .choice-button {
+      font-size: 1.2em;
+    }
+  }
+</style>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body><header style="display: flex; align-items: center; padding-bottom: 10px;"><img alt="Premier Inn Logo" src="premier-inn-logo.jpg" style="height: 120px;"/></header>
@@ -37,6 +85,8 @@
 <button onclick="loadProgress('save1')">Load 1</button>
 <button onclick="loadProgress('save2')">Load 2</button>
 <button id="exportPdfBtn" onclick="downloadWrongAnswers()">📄 Export Wrong Answers</button>
+<button id="germanwhilesleep" onclick="germanwhilesleep()">📄 learn german while sleeping</button>
+<button id="germanshadowing" onclick="germanshadowing()">📄 German shadowing speaking</button>
 <script src="questions.js"></script>
 <script>
 let quizData = [];
@@ -143,6 +193,25 @@ window.onload = function () {
   }
 };
 </script>
+
+<audio id="audioPlayer" controls style="display: none;">
+  <source src="your-audio-file.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<div style="margin-top: 10px;">
+  <button onclick="togglePlayPause()">▶️ Play / ⏸️ Pause</button>
+  <button id="loopBtn" onclick="toggleLoop()">🔁 Loop: Off</button>
+  <label for="speedSelect">Speed:</label>
+  <select id="speedSelect" onchange="changeSpeed(this.value)">
+    <option value="0.5">0.5x</option>
+    <option value="1" selected>1x (Normal)</option>
+    <option value="1.25">1.25x</option>
+    <option value="1.5">1.5x</option>
+    <option value="2">2x</option>
+  </select>
+</div>
+
+
 </body>
 </html>
 <script>
@@ -169,3 +238,50 @@ function downloadWrongAnswers() {
   doc.save("wrong_answers.pdf");
 }
 </script>
+
+<script>
+let currentAudio = null;
+
+function germanwhilesleep() {
+  playAudio("sleep-audio.mp3");
+}
+
+function germanshadowing() {
+  playAudio("shadowing-audio.mp3");
+}
+
+function playAudio(src) {
+  const audio = document.getElementById("audioPlayer");
+  const loopState = audio.loop; // Keep current loop state
+  const fullSrc = new URL(src, window.location.href).href;
+  if (audio.src !== fullSrc) {
+    audio.src = src;
+    audio.load();
+  }
+  audio.loop = loopState; // Preserve loop setting
+  audio.play();
+  currentAudio = audio;
+}
+
+function togglePlayPause() {
+  const audio = document.getElementById("audioPlayer");
+  if (audio.paused) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
+}
+
+function changeSpeed(value) {
+  const audio = document.getElementById("audioPlayer");
+  audio.playbackRate = parseFloat(value);
+}
+
+function toggleLoop() {
+  const audio = document.getElementById("audioPlayer");
+  audio.loop = !audio.loop;
+  const loopBtn = document.getElementById("loopBtn");
+  loopBtn.textContent = audio.loop ? "🔁 Loop: On" : "🔁 Loop: Off";
+}
+</script>
+
